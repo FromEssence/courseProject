@@ -1,4 +1,0 @@
-可疑程序K:\getTestExe.exe扫描结果：
-Kaspersky:程序安全
-McAfee:程序安全
-Qihoo-360:程序安全
