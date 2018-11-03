@@ -1,0 +1,67 @@
+package uDiskOpen;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+public class UdiskMonitor {
+	// 存放磁盘状态
+	private static HashMap<String, Boolean> diskMap = new HashMap<String, Boolean>();
+	// 定义磁盘
+	private static final String[] arr = new String[] { "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+			"Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+
+	// 初始化已有磁盘列表
+	public static void init() {
+		File file;
+		for (String str : arr) {
+			file = new File(str + ":\\");
+			diskMap.put(str, file.exists());
+		}
+
+	}
+
+	// 死循环检测每个磁盘状态
+	public static String check() {
+		File file;
+		while (true) {
+			for (String str : arr) {
+				file = new File(str + ":\\");
+
+				// 如果磁盘现在存在，并且以前不存在
+				// 则表示刚插上U盘，返回
+				if (file.exists() && !diskMap.get(str)) {
+					return str;
+				}
+
+				// 需要每次状态改变时，更新保存的状态
+				// 如果刚检测的状态和原来的状态不一样，则重新更新状态
+				if (file.exists() != diskMap.get(str)) {
+					diskMap.put(str, file.exists());
+				}
+			}
+
+			try {
+				Thread.sleep(3 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} // while end
+	} // function end
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try {
+			init();
+			
+			String newDisk = check();
+
+			// 检测到U盘后调用cmd安全打开
+			Runtime.getRuntime().exec("cmd /c start explorer " + newDisk + ":\\");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}
